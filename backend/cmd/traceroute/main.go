@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/G0MMY/traceroute/traceroute"
+	"github.com/G0MMY/traceroute/server"
 )
 
 func main() {
-	fmt.Println(traceroute.RunTraceroute("google.com", 33434, 1))
+	server := server.CreateServer()
+
+	server.Run("8080")
 }

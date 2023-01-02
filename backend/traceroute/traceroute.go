@@ -6,6 +6,8 @@ import (
 	"net"
 	"syscall"
 	"time"
+
+	"github.com/G0MMY/traceroute/geolocation"
 )
 
 type Traceroute struct {
@@ -18,6 +20,13 @@ type Node struct {
 	Domains []string
 	Delay   time.Duration
 }
+
+type Options struct {
+	Address string `json:"address"`
+	Ttl     int    `json:"ttl"`
+}
+
+const PORT = 33434
 
 func getLocalAddress() ([4]byte, error) {
 	interfaces, err := net.InterfaceAddrs()
@@ -68,7 +77,7 @@ func createLocalInetAddress(port int) (*syscall.SockaddrInet4, error) {
 	return &syscall.SockaddrInet4{Port: port, Addr: addr}, nil
 }
 
-func RunTraceroute(address string, port int, ttl int) (*Traceroute, error) {
+func RunTraceroute(options Options) (*Traceroute, error) {
 	var results []Node
 
 	sendSocket, err := syscall.Socket(syscall.AF_INET, syscall.SOCK_DGRAM, 0)
@@ -87,7 +96,7 @@ func RunTraceroute(address string, port int, ttl int) (*Traceroute, error) {
 	defer syscall.Close(receiveSocket)
 	defer syscall.Close(sendSocket)
 
-	localInet4, err := createLocalInetAddress(port)
+	localInet4, err := createLocalInetAddress(PORT)
 	if err != nil {
 		return nil, err
 	}
@@ -97,11 +106,11 @@ func RunTraceroute(address string, port int, ttl int) (*Traceroute, error) {
 	for {
 		var node Node
 
-		inet4, receiverAddress, err := createInet4Address(address, port)
+		inet4, receiverAddress, err := createInet4Address(options.Address, PORT)
 		if err != nil {
 			return nil, err
 		}
-		syscall.SetsockoptInt(sendSocket, 0x0, syscall.IP_TTL, ttl)
+		syscall.SetsockoptInt(sendSocket, 0x0, syscall.IP_TTL, options.Ttl)
 
 		startTime := time.Now()
 		syscall.Sendto(sendSocket, []byte{}, 0, inet4)
@@ -124,7 +133,7 @@ func RunTraceroute(address string, port int, ttl int) (*Traceroute, error) {
 		}
 
 		results = append(results, node)
-		ttl++
+		options.Ttl++
 
 		if receivedAddress == receiverAddress {
 			break
@@ -132,4 +141,14 @@ func RunTraceroute(address string, port int, ttl int) (*Traceroute, error) {
 	}
 
 	return &Traceroute{Results: results, Total: len(results)}, nil
+}
+
+func (t *Traceroute) Localize() {
+	var addresses []string
+
+	for _, node := range t.Results {
+		addresses = append(addresses, node.Address)
+	}
+
+	geolocation.LocalizeAddresses(addresses)
 }
