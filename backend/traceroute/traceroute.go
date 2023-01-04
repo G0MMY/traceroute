@@ -3,6 +3,7 @@ package traceroute
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net"
 	"syscall"
 	"time"
@@ -16,9 +17,10 @@ type Traceroute struct {
 }
 
 type Node struct {
-	Address string
-	Domains []string
-	Delay   time.Duration
+	Address  string
+	Domains  []string
+	Delay    time.Duration
+	Location *geolocation.Location
 }
 
 type Options struct {
@@ -106,14 +108,15 @@ func RunTraceroute(options Options) (*Traceroute, error) {
 	for {
 		var node Node
 
-		inet4, receiverAddress, err := createInet4Address(options.Address, PORT)
+		syscall.SetsockoptInt(sendSocket, 0x0, syscall.IP_TTL, options.Ttl)
+
+		inet4Addr, receiverAddress, err := createInet4Address(options.Address, PORT)
 		if err != nil {
 			return nil, err
 		}
-		syscall.SetsockoptInt(sendSocket, 0x0, syscall.IP_TTL, options.Ttl)
 
 		startTime := time.Now()
-		syscall.Sendto(sendSocket, []byte{}, 0, inet4)
+		syscall.Sendto(sendSocket, []byte{}, 0, inet4Addr)
 
 		var packet = make([]byte, 52)
 		_, from, err := syscall.Recvfrom(receiveSocket, packet, 0)
@@ -127,8 +130,17 @@ func RunTraceroute(options Options) (*Traceroute, error) {
 
 		node.Address = formattedAddr
 
+		// location, err := geolocation.LocalizeAddress(formattedAddr)
+		// if err != nil {
+		// 	log.Println(err)
+		// } else {
+		// 	node.Location = location
+		// }
+
 		domains, err := net.LookupAddr(formattedAddr)
-		if err == nil {
+		if err != nil {
+			log.Println(err)
+		} else {
 			node.Domains = domains
 		}
 
@@ -141,14 +153,4 @@ func RunTraceroute(options Options) (*Traceroute, error) {
 	}
 
 	return &Traceroute{Results: results, Total: len(results)}, nil
-}
-
-func (t *Traceroute) Localize() {
-	var addresses []string
-
-	for _, node := range t.Results {
-		addresses = append(addresses, node.Address)
-	}
-
-	geolocation.LocalizeAddresses(addresses)
 }

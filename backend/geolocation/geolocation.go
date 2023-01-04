@@ -1,29 +1,31 @@
 package geolocation
 
 import (
-	"fmt"
+	"strings"
 
 	"github.com/go-apilayer/ipstack"
 )
 
-func LocalizeAddresses(addresses []string) {
-	var locations []*ipstack.Stack
+type Location struct {
+	Latitude  float64
+	Longitude float64
+}
+
+func LocalizeAddress(address string) (*Location, error) {
+	splitted := strings.Split(address, ".")
+	if splitted[0] == "10" || splitted[0] == "192" {
+		return nil, nil
+	}
+
 	client, err := ipstack.NewClient("ce122b7b526ac43a2783ce615e7c1e0a", false)
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
-	for _, address := range addresses {
-		stack, err := client.Lookup(address)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		locations = append(locations, stack)
+	stack, err := client.Lookup(address)
+	if err != nil {
+		return nil, err
 	}
 
-	for _, a := range locations {
-		fmt.Println(*a)
-	}
+	return &Location{Latitude: stack.Latitude, Longitude: stack.Longitude}, nil
 }
