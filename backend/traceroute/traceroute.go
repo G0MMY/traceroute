@@ -17,15 +17,16 @@ type Traceroute struct {
 }
 
 type Node struct {
-	Address  string
-	Domains  []string
-	Delay    time.Duration
-	Location *geolocation.Location
+	Address  string                `json:"address"`
+	Domains  []string              `json:"domains"`
+	Delay    time.Duration         `json:"delay"`
+	Location *geolocation.Location `json:"location"`
 }
 
 type Options struct {
 	Address string `json:"address"`
 	Ttl     int    `json:"ttl"`
+	MaxHops int    `json:"maxHops"`
 }
 
 const PORT = 33434
@@ -92,7 +93,7 @@ func RunTraceroute(options Options) (*Traceroute, error) {
 		return nil, err
 	}
 
-	timeval := syscall.NsecToTimeval(1000 * 1000 * 10000)
+	timeval := syscall.NsecToTimeval(1000 * 1000 * 1000)
 	syscall.SetsockoptTimeval(receiveSocket, syscall.SOL_SOCKET, syscall.SO_RCVTIMEO, &timeval)
 
 	defer syscall.Close(receiveSocket)
@@ -121,7 +122,16 @@ func RunTraceroute(options Options) (*Traceroute, error) {
 		var packet = make([]byte, 52)
 		_, from, err := syscall.Recvfrom(receiveSocket, packet, 0)
 		if err != nil {
-			return nil, err
+			log.Println(err)
+
+			if options.MaxHops == 0 {
+				break
+			}
+
+			options.MaxHops--
+			options.Ttl++
+
+			continue
 		}
 		node.Delay = time.Now().Sub(startTime)
 
@@ -146,6 +156,7 @@ func RunTraceroute(options Options) (*Traceroute, error) {
 
 		results = append(results, node)
 		options.Ttl++
+		options.MaxHops--
 
 		if receivedAddress == receiverAddress {
 			break
