@@ -1,1 +1,2 @@
 backend/cmd/traceroute/__*
+backend/secrets/*

@@ -12,8 +12,8 @@ import (
 )
 
 type Traceroute struct {
-	Results []Node
-	Total   int
+	Results []Node `json:"results"`
+	Total   int    `json:"total"`
 }
 
 type Node struct {
@@ -93,7 +93,7 @@ func RunTraceroute(options Options) (*Traceroute, error) {
 		return nil, err
 	}
 
-	timeval := syscall.NsecToTimeval(1000 * 1000 * 1000)
+	timeval := syscall.NsecToTimeval(1000 * 1000 * 5000)
 	syscall.SetsockoptTimeval(receiveSocket, syscall.SOL_SOCKET, syscall.SO_RCVTIMEO, &timeval)
 
 	defer syscall.Close(receiveSocket)
@@ -140,12 +140,12 @@ func RunTraceroute(options Options) (*Traceroute, error) {
 
 		node.Address = formattedAddr
 
-		// location, err := geolocation.LocalizeAddress(formattedAddr)
-		// if err != nil {
-		// 	log.Println(err)
-		// } else {
-		// 	node.Location = location
-		// }
+		location, err := geolocation.LocalizeAddress(formattedAddr)
+		if err != nil {
+			log.Println(err)
+		} else {
+			node.Location = location
+		}
 
 		domains, err := net.LookupAddr(formattedAddr)
 		if err != nil {

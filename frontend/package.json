@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@mui/lab": "^5.0.0-alpha.114",
     "@mui/material": "^5.11.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -15,6 +16,7 @@
     "@types/react-dom": "^18.0.10",
     "@types/react-leaflet-markercluster": "^3.0.0",
     "leaflet": "^1.9.3",
+    "leaflet-canvas-markers": "^1.0.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.0",

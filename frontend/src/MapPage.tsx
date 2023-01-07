@@ -1,11 +1,13 @@
 import React, { useMemo, useState } from "react"
 import internal from "stream"
 import Map from "./MapContainer"
+import NodeTimeline from "./NodeTimeline"
 import SearchBar from "./SearchBar"
 
 interface Location {
     longitude: number
     latitude: number
+    city: string
 }
 
 export interface Node {
@@ -47,9 +49,8 @@ export default function MapPage() {
             if (resp.ok) {
                 return resp.json()
             }
-            console.log(resp)
         }).then((data) => {
-            setNodes(data.Results)
+            setNodes(data.results)
         }).catch((err) => {
             console.log(err)
         })
@@ -68,9 +69,10 @@ export default function MapPage() {
     }, [nodes])
 
     return (
-        <div>
+        <div style={{display: 'flex', flexDirection: 'column'}}>
             <SearchBar handleSearchChange={handleSearchChange} handleSearchClick={handleSearchClick}/>
             <Map tracerouteResults={tracerouteResults}/>
+            <NodeTimeline tracerouteResults={tracerouteResults} />
         </div>
     )
 }

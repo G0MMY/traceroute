@@ -9,7 +9,7 @@ interface Props {
 
 export default function Map({tracerouteResults}: Props) {
     return (
-        <MapContainer className="map" center={[51.0, 19.0]} zoom={4} >
+        <MapContainer className="map" center={[47, 101]} zoom={2}>
             <TileLayer
                 url='https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png'
                 attribution='&copy; <a href="https://carto.com/">carto.com</a> contributors'
