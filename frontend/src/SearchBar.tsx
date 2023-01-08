@@ -13,7 +13,7 @@ export default function SearchBar({handleSearchChange, handleSearchClick}: Props
                 <TextField onChange={(e) => {
                     handleSearchChange(e)
                 }} style={{width: '300px', marginRight: '10px'}} label="Ip address or hostname" variant="outlined"/>
-                <Button onClick={handleSearchClick} style={{marginTop: '9px'}} variant="contained">Search</Button>
+                <Button onClick={handleSearchClick} style={{marginTop: '9px'}} variant="contained">Test</Button>
             </div>
         </div>
     )

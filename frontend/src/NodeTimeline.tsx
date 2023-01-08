@@ -14,48 +14,48 @@ const createTimelineItems = (tracerouteResults: LocationNode[]) => {
     tracerouteResults.forEach((result, i) => {
         if (i === 0) {
             items.push(
-                <div style={{display: 'flex', flexDirection: 'column', marginLeft: 'auto'}}>
-                    <div style={{marginBottom: '20px', textAlign: 'center', marginRight: '-10px'}}>
+                <div className="columnFlex" style={{marginLeft: 'auto'}}>
+                    <div className="addressText" style={{marginRight: '-10px'}}>
                         {result.address}
                     </div>
-                    <div style={{display: 'flex', width: '150px', justifyContent: 'space-around'}}>
+                    <div className="timelineNode">
                         <div style={{width: '55px'}}/>
-                        <span style={{backgroundColor: getColor(i), borderRadius: '50%', width: '20px', height: '20px'}}/>
-                        <div style={{width: '55px', borderBottom: '2px solid gray', marginBottom: '8px', marginRight: '-10px'}}/>
+                        <span className="timelineCircle" style={{backgroundColor: getColor(i)}}/>
+                        <div className="timelineLine" style={{marginRight: '-10px'}}/>
                     </div>
-                    <div style={{marginTop: '20px', textAlign: 'center', marginRight: '-10px'}}>
+                    <div className="timelineCity" style={{marginRight: '-10px'}}>
                         {result.location.city}
                     </div>
                 </div>
             )
         } else if (i !== tracerouteResults.length - 1) {
             items.push(
-                <div style={{display: 'flex', flexDirection: 'column'}}>
-                    <div style={{marginBottom: '20px', textAlign: 'center', marginRight: '-10px'}}>
+                <div className="columnFlex">
+                    <div className="addressText" style={{marginRight: '-10px'}}>
                         {result.address}
                     </div>
-                    <div style={{display: 'flex', width: '150px', justifyContent: 'space-around'}}>
-                        <div style={{width: '55px', borderBottom: '2px solid gray', marginBottom: '8px'}}/>
-                        <span style={{backgroundColor: getColor(i), borderRadius: '50%', width: '20px', height: '20px'}}/>
-                        <div style={{width: '55px', borderBottom: '2px solid gray', marginBottom: '8px', marginRight: '-10px'}}/>
+                    <div className="timelineNode">
+                        <div className="timelineLine"/>
+                        <span className="timelineCircle" style={{backgroundColor: getColor(i)}}/>
+                        <div className="timelineLine" style={{marginRight: '-10px'}}/>
                     </div>
-                    <div style={{marginTop: '20px', textAlign: 'center', marginRight: '-10px'}}>
+                    <div className="timelineCity" style={{marginRight: '-10px'}}>
                         {result.location.city}
                     </div>
                 </div>
             )
         } else {
             items.push(
-                <div style={{display: 'flex', flexDirection: 'column', marginRight: 'auto'}}>
-                    <div style={{marginBottom: '20px', textAlign: 'center'}}>
+                <div className="columnFlex" style={{marginRight: 'auto'}}>
+                    <div className="addressText">
                         {result.address}
                     </div>
-                    <div style={{display: 'flex', width: '150px', justifyContent: 'space-around'}}>
-                        <div style={{width: '50px', borderBottom: '2px solid gray', marginBottom: '8px'}}/>
-                        <span style={{backgroundColor: getColor(i), borderRadius: '50%', width: '20px', height: '20px'}}/>
-                        <div style={{width: '50px'}}/>
+                    <div className="timelineNode">
+                        <div className="timelineLine"/>
+                        <span className="timelineCircle" style={{backgroundColor: getColor(i)}}/>
+                        <div style={{width: '55px'}}/>
                     </div>
-                    <div style={{marginTop: '20px', textAlign: 'center'}}>
+                    <div className="timelineCity">
                         {result.location.city}
                     </div>
                 </div>

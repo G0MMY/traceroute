@@ -18,3 +18,36 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+.columnFlex {
+    display: flex; 
+    flex-direction: column;
+}
+
+.addressText {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.timelineNode {
+    display: flex;
+    width: 150px;
+    justify-content: space-around;
+}
+
+.timelineLine {
+    width: 55px;
+    border-bottom: 2px solid gray;
+    margin-bottom: 8px;
+}
+
+.timelineCircle {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+}
+
+.timelineCity {
+    margin-top: 20px;
+    text-align: center;
+}
