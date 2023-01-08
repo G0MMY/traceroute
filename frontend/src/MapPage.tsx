@@ -4,7 +4,7 @@ import Map from "./MapContainer"
 import NodeTimeline from "./NodeTimeline"
 import SearchBar from "./SearchBar"
 
-interface Location {
+export interface Location {
     longitude: number
     latitude: number
     city: string

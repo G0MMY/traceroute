@@ -3,7 +3,7 @@ import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import React, { useEffect, useRef } from 'react'
 import { useMap } from 'react-leaflet'
-import { LocationNode, Node } from './MapPage';
+import { LocationNode, Location } from './MapPage';
 
 interface Props {
     tracerouteResults: LocationNode[]
@@ -60,11 +60,33 @@ const createClusterIcon = (childCount: number, markers: L.Marker[]) => {
     });
 }
 
+const createMapKey = (location: Location) => {
+    return location.city + location.latitude + location.longitude
+}
+
+const findSameLocations = (nodes: LocationNode[]) => {
+    const sameLocations = new Map<string, LocationNode[]>();
+
+    nodes.forEach((node) => {
+        const key = createMapKey(node.location)
+        if (sameLocations.has(key)) {
+            sameLocations.get(key)!.push(node)
+        } else {
+            sameLocations.set(key, [node])
+        }
+    })
+
+    return sameLocations
+}
+
 export default function MapNodesLayer({tracerouteResults}: Props) {
     const map = useMap();
 
     useEffect(() => {
         if (tracerouteResults.length > 0) {
+            const singleMarkers: NodeMarker[] = []
+            const sameLocations = findSameLocations(tracerouteResults)
+
             const cluster = L.markerClusterGroup({
                 singleMarkerMode: true,
                 spiderfyOnMaxZoom: true,
@@ -74,14 +96,31 @@ export default function MapNodesLayer({tracerouteResults}: Props) {
                 }
             })
             
-            tracerouteResults.forEach((traceroute, i) => {
-                new NodeMarker([traceroute.location.latitude, traceroute.location.longitude], i).addTo(cluster)
+            let index = 0
+            sameLocations.forEach((location) => {
+                if (location.length === 1) {
+                    const marker = new NodeMarker([location[0].location.latitude, location[0].location.longitude], index)
+                    const icon = createClusterIcon(1, [marker])
+                    marker.setIcon(icon)
+                    singleMarkers.push(marker)
+                    index++
+                } else {
+                    location.forEach((node) => {
+                        new NodeMarker([node.location.latitude, node.location.longitude], index).addTo(cluster)
+                        index++
+                    })
+                }
             })
 
-            map.addLayer(cluster)
-            map.fitBounds(cluster.getBounds())
+            const group = L.featureGroup([cluster, ...singleMarkers]).addTo(map)
+
+            map.addLayer(group)
+            map.fitBounds(group.getBounds())
     
             return () => {
+                singleMarkers.forEach((marker) => {
+                    map.removeLayer(marker)
+                })
                 map.removeLayer(cluster)
             }
         } 
