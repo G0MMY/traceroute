@@ -69,8 +69,10 @@ const createTimelineItems = (tracerouteResults: LocationNode[]) => {
 export default function NodeTimeline({tracerouteResults}: Props) {
 
     return (
-        <div style={{display: 'flex', marginTop: '30px', overflow: 'auto'}}>
-            {createTimelineItems(tracerouteResults)}
+        <div style={{height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <div style={{display: 'flex', overflow: 'auto'}}>
+                {createTimelineItems(tracerouteResults)}
+            </div>
         </div>
     )
 }

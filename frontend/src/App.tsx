@@ -3,9 +3,7 @@ import MapPage from './MapPage';
 
 function App() {
   return (
-    <div>
-      <MapPage />
-    </div>
+    <MapPage />
   );
 }
 

@@ -69,9 +69,9 @@ export default function MapPage() {
     }, [nodes])
 
     return (
-        <div style={{display: 'flex', flexDirection: 'column'}}>
+        <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
             <SearchBar handleSearchChange={handleSearchChange} handleSearchClick={handleSearchClick}/>
-            <div style={{display: 'flex', flexDirection: 'column'}}>
+            <div style={{display: 'flex', flexDirection: 'column', height: '100%', margin: '10px'}}>
                 <Map tracerouteResults={tracerouteResults}/>
                 <NodeTimeline tracerouteResults={tracerouteResults} />
             </div>

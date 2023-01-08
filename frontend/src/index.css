@@ -1,5 +1,14 @@
+body {
+    height: 100vh;
+    margin: 0;
+}
+
+#root {
+    height: 100%;
+}
+
 .map {
-    height: 70vh;
+    height: 100%;
 }
 
 .dot {
