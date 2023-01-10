@@ -27,12 +27,15 @@ export interface LocationNode {
 export default function MapPage() {
     const [search, setSearch] = useState("");
     const [nodes, setNodes] = useState<Node[]>([]);
+    const [error, setError] = useState(false);
+    const [progress, setProgress] = useState(false);
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         setSearch(e.currentTarget.value)
     }
 
     const handleSearchClick = () => {
+        setProgress(true)
         const requestOptions = {
             method: "POST",
             headers: {
@@ -49,10 +52,13 @@ export default function MapPage() {
             if (resp.ok) {
                 return resp.json()
             }
+            setError(true)
         }).then((data) => {
-            setNodes(data.results)
-        }).catch((err) => {
-            console.log(err)
+            setProgress(false)
+            if (data !== undefined) {
+                setError(false)
+                setNodes(data.results)
+            }
         })
     }
 
@@ -70,7 +76,7 @@ export default function MapPage() {
 
     return (
         <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-            <SearchBar handleSearchChange={handleSearchChange} handleSearchClick={handleSearchClick}/>
+            <SearchBar handleSearchChange={handleSearchChange} handleSearchClick={handleSearchClick} error={error} progress={progress}/>
             <div style={{display: 'flex', flexDirection: 'column', height: '100%', margin: '10px'}}>
                 <Map tracerouteResults={tracerouteResults}/>
                 <NodeTimeline tracerouteResults={tracerouteResults} />
